@@ -11,7 +11,7 @@ function printError(err, msg, url) {
   console.log('%s %s: %s %s', new Date().toLocaleTimeString(), msg, err, url);
 }
 
-var httpServer = http.createServer(function onCliReq(cliReq, cliRes) {
+var server = http.createServer(function onCliReq(cliReq, cliRes) {
   var x = url.parse(cliReq.url);
   if (PROXY_URL)
     var options = {host: PROXY_HOST, port: PROXY_PORT, path: cliReq.url,
@@ -31,12 +31,12 @@ var httpServer = http.createServer(function onCliReq(cliReq, cliRes) {
   });
 }).listen(HTTP_PORT);
 
-httpServer.on('clientError', function onCliErr(err, cliSoc) {
+server.on('clientError', function onCliErr(err, cliSoc) {
   cliSoc.end();
   printError(err, 'cliErr', '');
 });
 
-httpServer.on('connect', function onCliConn(cliReq, cliSoc, cliHead) {
+server.on('connect', function onCliConn(cliReq, cliSoc, cliHead) {
   var x = url.parse('https://' + cliReq.url);
   if (PROXY_HOST) {
     var options = {host: PROXY_HOST, port: PROXY_PORT, path: cliReq.url,
